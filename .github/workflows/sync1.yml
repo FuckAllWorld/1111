@@ -30,11 +30,6 @@ jobs:
           echo "Owner Repo: $owner_repo" # 调试输出
           owner=$(echo $owner_repo | cut -d ' ' -f1) # 提取 owner
           repo=$(echo $owner_repo | cut -d ' ' -f2) # 提取 repo
-          
-          # 执行 Fork 操作
-          echo "Forking $owner/$repo"
-          curl -X POST -H "Authorization: token ${{ secrets.PERSONAL_TOKEN }}" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$owner/$repo/forks"
-          
-          # 可选：添加一些延迟以避免请求过于频繁
-          sleep 5
+          echo $owner
+          echo $repo
         done
