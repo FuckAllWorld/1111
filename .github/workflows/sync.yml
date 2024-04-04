@@ -1,20 +1,23 @@
-name: Sync Fork
+name: Fork Repository
 
 on:
-  schedule:
-    - cron: '*/30 * * * *' # every 30 minutes
-  workflow_dispatch: # on button click
+  push:
+    branches:
+      - main  # 触发条件可以根据需要进行调整
 
 jobs:
-  sync:
-
+  fork_repository:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: tgymnich/fork-sync@v1.8
-        with:
-          token: ${{ secrets.PERSONAL_TOKEN }}
-          owner: CVEProject
-          repo: cvelist
-          base: master
-          head: master
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        
+      - name: Fork Repository
+        id: fork_repo
+        run: |
+          TOKEN=${{ secrets.GITHUB_TOKEN }}
+          REPO_OWNER="CVEProject"  # 原始仓库的拥有者
+          REPO_NAME="cvelist"  # 原始仓库的名称
+          API_URL="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/forks"
+          RESPONSE=$(curl -X POST -H "Authorization: token $TOKEN" $API_URL)
+          echo "::set-output name=forked_repo::$RESPONSE"
