@@ -1,34 +1,29 @@
-name: Batch Auto Fork
+name: Fork Repos
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main  # 触发条件：当代码提交到 main 分支时触发
 
 jobs:
-  fork:
-    runs-on: ubuntu-latest
+  fork_repos:
+    runs-on: ubuntu-latest  # 使用 Ubuntu 最新版本作为运行环境
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      
-    - name: Read owners_repos file
-      id: read_owners_repos
+    - name: Checkout repository  # 检出代码仓库
+      uses: actions/checkout@v2  # 使用官方的 checkout 动作
+
+    - name: Read owners_repos from file  # 从文件中读取 owners_repos 列表
       run: |
-        echo "::set-output name=owners_repos::$(cat owners_repos.txt)"
-        
-    - name: Batch Fork repositories
-      run: |
-        # 从输出中获取 owners_repos 列表
-        owners_repos=$(echo "${{ steps.read_owners_repos.outputs.owners_repos }}")
-        
-        # 循环遍历 owner 和 repo 列表
+        owners_repos_file="owners_repos.txt"
+        if [ ! -f "$owners_repos_file" ]; then
+            echo "Error: $owners_repos_file does not exist."
+            exit 1
+        fi
         while IFS= read -r owner_repo; do
-          owner=$(echo $owner_repo | cut -d ':' -f1) # 提取 owner
-          repo=$(echo $owner_repo | cut -d ':' -f2) # 提取 repo
-          
-          # 执行 Fork 操作
-          echo "Forking $owner/$repo"
-          curl -X POST -H "Authorization: token ${{ secrets.PERSONAL_TOKEN }}" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$owner/$repo/forks"
-          
-          # 可选：添加一些延迟以避免请求过于频繁
-          sleep 5
-        done <<< "$owners_repos"
+            echo "Forking $owner_repo"
+            curl -X POST -H "Authorization: token ${{ secrets.PERSONAL_TOKEN }}" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$owner_repo/forks"
+            sleep 5
+        done < "$owners_repos_file"
+
+      shell: bash  # 使用 bash shell
