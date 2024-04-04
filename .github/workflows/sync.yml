@@ -5,12 +5,15 @@ on:
   schedule:
     - cron: '0 * * * *' # 每小时 0分触发, 对于一些更新不那么频繁的项目可以设置为每天一次, 低碳一点
 jobs:
-  repo-sync:
+  update_external_airflow_fork:
     runs-on: ubuntu-latest
     steps:
-      - uses: TG908/fork-sync@v1.1
+      - uses: TobKed/github-forks-sync-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }} # 这个 token action 会默认配置, 这里只需这样写就行
-          owner: anuraghazra # fork 上游项目 owner
-          head: master # fork 上游项目需要同步的分支
-          base: master # 需要同步到本项目的目标分支
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upstream_repository: apache/airflow
+          target_repository: TobKed/airflow
+          upstream_branch: master
+          target_branch: master
+          force: true
+          tags: true
