@@ -1,19 +1,18 @@
 name: Sync Fork
 
 on:
-  push: # push 时触发, 主要是为了测试配置有没有问题
   schedule:
-    - cron: '0 * * * *' # 每小时 0分触发, 对于一些更新不那么频繁的项目可以设置为每天一次, 低碳一点
+    - cron: '*/30 * * * *' # every 30 minutes
+  workflow_dispatch: # on button click
+
 jobs:
-  update_external_airflow_fork:
+  sync:
+
     runs-on: ubuntu-latest
+
     steps:
-      - uses: TobKed/github-forks-sync-action@master
+      - uses: tgymnich/fork-sync@v1.8
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          upstream_repository: apache/airflow
-          target_repository: TobKed/airflow
-          upstream_branch: master
-          target_branch: master
-          force: true
-          tags: true
+          owner: llvm
+          base: master
+          head: master
