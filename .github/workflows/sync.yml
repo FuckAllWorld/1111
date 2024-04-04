@@ -13,5 +13,5 @@ jobs:
         route: POST /repos/:owner/:repo/forks
         owner: CVEProject # 原始仓库的拥有者用户名
         repo: cvelist # 原始仓库的名称
-        organization: ${{ github.repository_owner }}
-        token: ${{ secrets.PERSONAL_TOKEN }}
+        token: ${{ secrets.PERSONAL_TOKEN }} # 替换为你的 Personal Access Token
+        mediaType: application/vnd.github.v3+json
