@@ -25,8 +25,8 @@ jobs:
         
         # 循环遍历 owner 和 repo 列表
         for owner_repo in "${repos_array[@]}"; do
-          owner=$(echo $owner_repo | cut -d ':' -f1) # 提取 owner
-          repo=$(echo $owner_repo | cut -d ':' -f2) # 提取 repo
+          owner=$(echo $owner_repo | cut -d ' ' -f1) # 提取 owner
+          repo=$(echo $owner_repo | cut -d ' ' -f2) # 提取 repo
           
           # 执行 Fork 操作
           echo "Forking $owner/$repo"
