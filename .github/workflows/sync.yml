@@ -1,23 +1,17 @@
-name: Fork Repository
+name: Auto Fork
 
 on:
-  push:
-    branches:
-      - main  # 触发条件可以根据需要进行调整
+  workflow_dispatch:
 
 jobs:
-  fork_repository:
+  fork:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        
-      - name: Fork Repository
-        id: fork_repo
-        run: |
-          TOKEN=${{ secrets.GITHUB_TOKEN }}
-          REPO_OWNER="CVEProject"  # 原始仓库的拥有者
-          REPO_NAME="cvelist"  # 原始仓库的名称
-          API_URL="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/forks"
-          RESPONSE=$(curl -X POST -H "Authorization: token $TOKEN" $API_URL)
-          echo "::set-output name=forked_repo::$RESPONSE"
+    - name: Fork repository
+      uses: octokit/request-action@v2.x
+      with:
+        route: POST /repos/:owner/:repo/forks
+        owner: CVEProject # 原始仓库的拥有者用户名
+        repo: cvelist # 原始仓库的名称
+        organization: ${{ github.repository_owner }}
+        token: ${{ secrets.PERSONAL_TOKEN }}
