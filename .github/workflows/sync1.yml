@@ -20,8 +20,11 @@ jobs:
         # 从输出中获取 owners_repos 列表
         owners_repos=$(echo "${{ steps.read_owners_repos.outputs.owners_repos }}")
         
+        # 按行分割 owners_repos
+        IFS=$'\n' read -rd '' -a repos_array <<< "$owners_repos"
+        
         # 循环遍历 owner 和 repo 列表
-        while IFS= read -r owner_repo; do
+        for owner_repo in "${repos_array[@]}"; do
           owner=$(echo $owner_repo | cut -d ':' -f1) # 提取 owner
           repo=$(echo $owner_repo | cut -d ':' -f2) # 提取 repo
           
@@ -31,4 +34,4 @@ jobs:
           
           # 可选：添加一些延迟以避免请求过于频繁
           sleep 5
-        done <<< "$owners_repos"
+        done
